@@ -1,4 +1,4 @@
-# jetCDNparse
+# steam-cloud-backup
 
 micro-script for downloading all save files from [steam cloud](https://store.steampowered.com/account/remotestorage)
 
@@ -29,9 +29,21 @@ uv sync
 
 ```console
 $ uv run main.py backup-folder/
+steamLoginSecure: <input>
 INFO:__main__:iter game: Steam Client; files count: 2
 ...
 ```
+
+<br>
+
+To identify login to your account, steam uses `steamLoginSecure` cookie, therefore the script requires it to work.  
+Method of obtaining this cookie:
+
+- [ ] log in to https://store.steampowered.com/login/
+- [ ] open Dev Tools via `ctrl + shift + i`
+- [ ] go to the application (or storage) tab
+- [ ] in the cookies section, select `https://store.steampowered.com`
+- [ ] copy the entire contents of the `steamLoginSecure` column
 
 <br>
 
