@@ -16,4 +16,4 @@ Repository = "https://github.com/q-deltafractal/steam-cloud-backup.git"
 Issues = "https://github.com/q-deltafractal/steam-cloud-backup/issues"
 
 [tool.ruff.format]
-quote-style = 'single'
+quote-style = "single"
