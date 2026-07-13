@@ -2,6 +2,8 @@
 
 import io
 import math
+import random
+import string
 import logging
 import asyncio
 import argparse
@@ -120,13 +122,16 @@ class TableParser(HTMLParser):
 
 
 async def parse(
-    c_session_id: LiteralString,
     c_steam_login_secure: LiteralString,
     path_to_folder: Path,
     useragent: LiteralString,
     concurrent_connections: int,
     connect_timeout: int,
+    c_session_id: str | None = None,
 ) -> None:
+    if c_session_id is None:
+        c_session_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=24))
+
     async with aiohttp.ClientSession(
         connector=TCPConnector(limit=concurrent_connections, ttl_dns_cache=300),
         timeout=aiohttp.ClientTimeout(total=connect_timeout),
@@ -234,13 +239,13 @@ if __name__ == '__main__':
 
     # data
     try:
-        for k in (SESSION_ID, STEAM_LOGIN_SECURE):
+        for k in (STEAM_LOGIN_SECURE,):
             attr = getattr(args, k)
             if not attr:
                 if not (value := input(f'{k}: ')):
                     raise
                 setattr(args, k, value)
-    except KeyboardInterrupt:
+    except:
         parser.exit(1, '\nnot enough data\n')
 
     path = (
@@ -264,4 +269,4 @@ if __name__ == '__main__':
     except BadSessionException:
         parser.exit(2, 'bad cookie session\n')
     except ZeroAnswerException:
-        parser.exit(3, 'steam return zero page\m')
+        parser.exit(3, 'steam return zero page\n')
