@@ -28,7 +28,7 @@ uv sync
 ### backup
 
 ```console
-$ uv run main.py
+$ uv run main.py backup-folder/
 INFO:__main__:iter game: Steam Client; files count: 2
 ...
 ```
