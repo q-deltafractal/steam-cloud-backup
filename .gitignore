@@ -1,6 +1,9 @@
 # https://github.com/github/gitignore/blob/main/Python.gitignore
 # 576334520435382d6522f349b9d270eda1e79a25
 
+# Project
+out/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

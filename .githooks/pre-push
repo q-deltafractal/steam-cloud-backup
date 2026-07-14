@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# replace help message with new
+
+help_message=$(uv run main.py -h)
+
+uv run - <<EOF
+import re
+from pathlib import Path
+
+FILE = Path('README.md')
+START = '\`\`\`console block=api'
+END = '\`\`\`'
+
+text: str
+with open(FILE, 'r') as f:
+    text = f.read()
+
+text = re.sub(
+    rf'{re.escape(START)}(.*?){re.escape(END)}',
+    f"""{START}
+${help_message}
+{END}""",
+    text,
+    flags=re.DOTALL,
+)
+
+with open(FILE, 'w') as f:
+    f.write(text)
+EOF

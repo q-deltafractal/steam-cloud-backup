@@ -2,6 +2,7 @@
 
 micro-script for downloading all save files from [steam cloud](https://store.steampowered.com/account/remotestorage)
 
+<br>
 
 ## backup process
 
@@ -41,7 +42,7 @@ Method of obtaining this cookie:
 
 - [ ] log in to https://store.steampowered.com/login/
 - [ ] open Dev Tools via `ctrl + shift + i`
-- [ ] go to the application (or storage) tab
+- [ ] go to the application _(or storage)_ tab
 - [ ] in the cookies section, select `https://store.steampowered.com`
 - [ ] copy the entire contents of the `steamLoginSecure` column
 
@@ -49,22 +50,33 @@ Method of obtaining this cookie:
 
 ## usage
 
-```console
-$ uv run main.py -h
-usage: steam-cloud-backup [-h] [-i SESSIONID] [-l STEAMLOGINSECURE] [-j MAX_CONCURRENT_CONNECTIONS] [--connect-timeout CONNECT_TIMEOUT] [--useragent USERAGENT] folder
+```console block=api
+usage: steam-cloud-backup [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]
+                          [-j MAX_CONCURRENT_CONNECTIONS]
+                          [--connect-timeout CONNECT_TIMEOUT]
+                          [--useragent USERAGENT] [-v (0, 1, 2)]
+                          folder
 
 micro-script for downloading all save files from steam cloud
 
-positional arguments:
-  folder
-
 options:
   -h, --help            show this help message and exit
+
+session:
   -i, --sessionId SESSIONID
   -l, --steamLoginSecure STEAMLOGINSECURE
+
+connection:
   -j, --max-concurrent-connections MAX_CONCURRENT_CONNECTIONS
+                        default: 16
   --connect-timeout CONNECT_TIMEOUT
+                        default: 60 (s)
   --useragent USERAGENT
+
+out:
+  folder
+  -v, --verbose (0, 1, 2)
+                        logging type: 0 - off; 1 (default) - info; 2 - debug
 ```
 
 <br>
