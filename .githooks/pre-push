@@ -2,7 +2,7 @@
 
 # replace help message with new
 
-help_message=$(uv run main.py -h)
+help_message=$(uv run --no-project --no-build --no-binary steamcb/cli.py -h)
 
 uv run - <<EOF
 import re

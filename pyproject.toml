@@ -1,10 +1,16 @@
 [project]
 name = "steam-cloud-backup"
-version = "0.1.0"
+version = "0.1.5"
+authors = [
+	{ name="q-deltaftactal" }
+]
 description = "micro-script for downloading all save files from steam cloud"
 readme = "README.md"
 license = "MIT"
-license-files = ["LICENSE"]
+license-files = ["LICEN[CS]E*"]
+classifiers = [
+	"Topic :: Utilities"
+]
 requires-python = ">=3.14"
 dependencies = [
     "aiofiles>=25.1.0",
@@ -14,6 +20,20 @@ dependencies = [
 [project.urls]
 Repository = "https://github.com/q-deltafractal/steam-cloud-backup.git"
 Issues = "https://github.com/q-deltafractal/steam-cloud-backup/issues"
+
+[project.scripts]
+steam-cloud-backup = "steamcb.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.11.28,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "steamcb"
+module-root = ""
+
+[tool.setuptools]
+packages = ["steamcb"]
 
 [tool.ruff.format]
 quote-style = "single"

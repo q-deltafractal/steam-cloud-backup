@@ -1,4 +1,4 @@
-ruff = uvx ruff
+ruff = uv tool run ruff@latest
 
 all: format run
 
@@ -10,5 +10,4 @@ format:
 	${ruff} format
 
 run:
-	uv run main.py
-
+	uv run main.py out/

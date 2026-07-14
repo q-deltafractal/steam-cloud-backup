@@ -4,29 +4,28 @@ micro-script for downloading all save files from [steam cloud](https://store.ste
 
 <br>
 
-## backup process
+## installation
 
-### requirements
-
-- [ ] [uv](https://docs.astral.sh/uv/) python package manager
-- [ ] [git](https://git-scm.com/install/) version control
-
-_latest versions_
-
-### preparation
+from [PyPI](https://pypi.org/project/steam-cloud-backup/):
 
 ```bash
-# clone repo
-git clone https://github.com/q-deltafractal/steam-cloud-backup.git
-cd steam-cloud-backup
+# with uv
+uv tool install steam-cloud-backup
 ```
 
 ```bash
-# setup virtual env
-uv sync
+# with pip
+pip install steam-cloud-backup
 ```
 
-### backup
+```bash
+# or pipx
+pipx install steam-cloud-backup
+```
+
+<br>
+
+## usage
 
 ```console
 $ uv run main.py backup-folder/
@@ -47,8 +46,6 @@ Method of obtaining this cookie:
 - [ ] copy the entire contents of the `steamLoginSecure` column
 
 <br>
-
-## usage
 
 ```console block=api
 usage: steam-cloud-backup [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]

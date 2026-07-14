@@ -11,8 +11,8 @@ import aiofiles
 import aiohttp
 from aiohttp import TCPConnector
 
-from tools import TableParser
-from errors import BadSessionException, DownloadException, ZeroAnswerException
+from source.tools import TableParser
+from source.errors import BadSessionException, DownloadException, ZeroAnswerException
 
 
 # datalink

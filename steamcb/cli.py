@@ -7,8 +7,8 @@ import asyncio
 import argparse
 from pathlib import Path
 
-from errors import BadSessionException, ZeroAnswerException
-from lib import SESSION_ID, STEAM_LOGIN_SECURE, parse
+from source.errors import BadSessionException, ZeroAnswerException
+from source.lib import SESSION_ID, STEAM_LOGIN_SECURE, parse
 
 
 # connection
