@@ -38,7 +38,7 @@ uv run steamcb/cli.py
 ## usage
 
 ```console
-$ uv run main.py out/
+$ steamcb out/
 steamLoginSecure: <input>
 INFO:__main__:iter game: Steam Client; files count: 2
 ...
