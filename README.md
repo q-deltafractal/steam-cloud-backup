@@ -58,11 +58,12 @@ Method of obtaining this cookie:
 <br>
 
 ```console block=api
-usage: steam-cloud-backup [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]
-                          [-j MAX_CONCURRENT_CONNECTIONS]
-                          [--connect-timeout CONNECT_TIMEOUT]
-                          [--useragent USERAGENT] [-v (0, 1, 2)]
-                          folder
+
+usage: steamcb [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]
+               [-j MAX_CONCURRENT_CONNECTIONS]
+               [--connect-timeout CONNECT_TIMEOUT] [--useragent USERAGENT]
+               [-v (0, 1, 2)]
+               folder
 
 micro-script for downloading all save files from steam cloud
 
