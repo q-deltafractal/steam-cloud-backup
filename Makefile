@@ -1,4 +1,4 @@
-ruff = uv tool run ruff@latest
+ruff = uv run --dev -m ruff
 
 all: format run
 
@@ -6,8 +6,8 @@ check:
 	${ruff} check
 	${ruff} format --check
 format:
-	${ruff} check --fix
 	${ruff} format
+	${ruff} check --fix
 
 run:
-	uv run main.py out/
+	uv run steamcb/cli.py out/

@@ -14,13 +14,23 @@ uv tool install steam-cloud-backup
 ```
 
 ```bash
-# with pip
-pip install steam-cloud-backup
+# or pipx
+pipx install steam-cloud-backup
 ```
 
 ```bash
-# or pipx
-pipx install steam-cloud-backup
+# or with pip
+pip install steam-cloud-backup
+```
+
+from source:
+
+```bash
+# clone source
+git clone https://github.com/q-deltafractal/steam-cloud-backup.git
+cd steam-cloud-backup
+# run script
+uv run steamcb/cli.py
 ```
 
 <br>
@@ -28,7 +38,7 @@ pipx install steam-cloud-backup
 ## usage
 
 ```console
-$ uv run main.py backup-folder/
+$ uv run main.py out/
 steamLoginSecure: <input>
 INFO:__main__:iter game: Steam Client; files count: 2
 ...
