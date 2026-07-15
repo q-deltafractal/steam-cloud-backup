@@ -112,6 +112,8 @@ async def parse(
                         await asyncio.sleep(1)
 
                     first_iter = False
+    
+    logger.info('backup success')
 
 
 async def download_file(

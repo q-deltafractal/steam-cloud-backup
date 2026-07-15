@@ -42,6 +42,7 @@ $ steamcb out/
 steamLoginSecure: <input>
 INFO:__main__:iter game: Steam Client; files count: 2
 ...
+INFO:__main__:backup success
 ```
 
 <br>
@@ -53,7 +54,7 @@ Method of obtaining this cookie:
 - [ ] open Dev Tools via `ctrl + shift + i`
 - [ ] go to the application _(or storage)_ tab
 - [ ] in the cookies section, select `https://store.steampowered.com`
-- [ ] copy the entire contents of the `steamLoginSecure` column
+- [ ] copy the entire contents of the `steamLoginSecure` row
 
 <br>
 

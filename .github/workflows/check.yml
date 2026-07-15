@@ -1,0 +1,21 @@
+name: code check
+
+on: [ push, pull_request ]
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/ruff-action@v3
+
+      - name: lint
+        run: ruff check --output-format=github -v
+
+      - name: format
+        run: ruff format --output-format=github --check -v

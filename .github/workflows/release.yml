@@ -7,17 +7,23 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    
     environment:
       name: pypi
+    
     permissions:
       id-token: write
       contents: read
+    
     steps:
       - name: checkout
         uses: actions/checkout@v7
+      
       - name: hello, uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      
       - name: collect source
         run: uv build
+      
       - name: Publish
         run: uv publish
