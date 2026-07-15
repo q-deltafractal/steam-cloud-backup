@@ -27,7 +27,7 @@ class _ArgumentParser(argparse.ArgumentParser):
 
 def main() -> None:
     parser = _ArgumentParser(
-        prog='steamcb',
+        prog='steam-cloud-backup',
         description='micro-script for downloading all save files from steam cloud',
     )
 

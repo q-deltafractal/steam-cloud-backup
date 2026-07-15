@@ -38,7 +38,7 @@ uv run steamcb/cli.py
 ## usage
 
 ```console
-$ steamcb out/
+$ steam-cloud-backup out/
 steamLoginSecure: <input>
 INFO:__main__:iter game: Steam Client; files count: 2
 ...
