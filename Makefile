@@ -11,3 +11,6 @@ format:
 
 run:
 	uv run steamcb/cli.py out/
+
+pre_commit:
+	.githooks/pre-commit

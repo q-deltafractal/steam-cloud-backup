@@ -2,13 +2,16 @@
 
 # replace help message with new
 
+echo 'replacing README help message'
+
 help_message=$(uv run --no-project steamcb/cli.py -h)
+file='README.md'
 
 uv run - <<EOF
 import re
 from pathlib import Path
 
-FILE = Path('README.md')
+FILE = Path('${file}')
 START = '\`\`\`console block=api'
 END = '\`\`\`'
 
@@ -28,3 +31,5 @@ ${help_message}
 with open(FILE, 'w') as f:
     f.write(text)
 EOF
+
+git add ${file}
