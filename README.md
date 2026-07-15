@@ -60,7 +60,7 @@ Method of obtaining this cookie:
 
 ```console block=api
 
-usage: steamcb [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]
+usage: steam-cloud-backup [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]
                           [-j MAX_CONCURRENT_CONNECTIONS]
                           [--connect-timeout CONNECT_TIMEOUT]
                           [--useragent USERAGENT] [-v (0, 1, 2)]
