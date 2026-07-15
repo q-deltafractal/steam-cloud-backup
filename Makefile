@@ -2,6 +2,9 @@ ruff = uv run --dev -m ruff
 
 all: format run
 
+init:
+	git config core.hooksPath .githooks
+
 check:
 	${ruff} check
 	${ruff} format --check
