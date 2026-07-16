@@ -25,23 +25,39 @@ STEAM_LOGIN_SECURE = 'steamLoginSecure'
 # max rows per page
 STEAM_PER_PAGE = 50
 
+# connection
+DEFAULT_USER_AGENT = (
+    'Mozilla/5.0 (X11; Linux x86_64) '
+    'AppleWebKit/537.36 (KHTML, like Gecko) '
+    'Chrome/60.0.3112.32 '
+    'Safari/537.36'
+)
+
 # logging
 logger = logging.getLogger(__name__)
+
+
+def gen_session_id() -> str:
+    return ''.join(
+            random.choices(
+                string.ascii_lowercase + string.digits,
+                k=24,
+            )
+        )
 
 
 async def parse(
     c_steam_login_secure: str,
     path_to_folder: Path,
-    useragent: str,
     concurrent_connections: int,
     connect_timeout: int,
-    c_session_id: str | None = None,
+    useragent: str | None,
+    c_session_id: str | None,
 ) -> None:
+    if useragent is None:
+        useragent = DEFAULT_USER_AGENT
     if c_session_id is None:
-        # steam default `sessionId` scheme
-        c_session_id = ''.join(
-            random.choices(string.ascii_lowercase + string.digits, k=24)
-        )
+        c_session_id = gen_session_id()
 
     async with aiohttp.ClientSession(
         connector=TCPConnector(limit=concurrent_connections, ttl_dns_cache=300),

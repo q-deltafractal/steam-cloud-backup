@@ -11,21 +11,12 @@ from steamcb.errors import BadSessionException, ZeroAnswerException
 from steamcb.lib import SESSION_ID, STEAM_LOGIN_SECURE, parse
 
 
-# connection
-DEFAULT_USER_AGENT = (
-    'Mozilla/5.0 (X11; Linux x86_64) '
-    'AppleWebKit/537.36 (KHTML, like Gecko) '
-    'Chrome/60.0.3112.32 '
-    'Safari/537.36'
-)
-
-
 class _ArgumentParser(argparse.ArgumentParser):
     def _print_message(self, message: str, file=None) -> None:
         super()._print_message(f'\n{message}\n', file=file)
 
 
-def main() -> None:
+def _main() -> None:
     parser = _ArgumentParser(
         prog='steam-cloud-backup',
         description='micro-script for downloading all save files from steam cloud',
@@ -61,7 +52,6 @@ def main() -> None:
     )
     group.add_argument(
         '--useragent',
-        default=DEFAULT_USER_AGENT,
         type=str,
     )
 
@@ -73,7 +63,7 @@ def main() -> None:
         '--verbose',
         choices=(0, 1, 2),
         default=1,
-        help="""logging type:
+        help="""logging level:
 0 - off;
 1 (default) - info;
 2 - debug""",
@@ -126,4 +116,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    _main()

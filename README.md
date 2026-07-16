@@ -85,7 +85,7 @@ connection:
 out:
   folder
   -v, --verbose (0, 1, 2)
-                        logging type: 0 - off; 1 (default) - info; 2 - debug
+                        logging level: 0 - off; 1 (default) - info; 2 - debug
 ```
 
 <br>

@@ -1,6 +1,6 @@
 [project]
 name = "steam-cloud-backup"
-version = "0.1.6"
+version = "0.1.7"
 authors = [
 	{ name="q-deltaftactal" }
 ]
@@ -16,16 +16,14 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "ruff>=0.15.21",
-]
+dev = ["ruff>=0.15.21"]
 
 [project.urls]
 Repository = "https://github.com/q-deltafractal/steam-cloud-backup.git"
 Issues = "https://github.com/q-deltafractal/steam-cloud-backup/issues"
 
 [project.scripts]
-steam-cloud-backup = "steamcb.cli:main"
+steam-cloud-backup = "steamcb.cli:_main"
 
 [build-system]
 requires = ["uv_build>=0.11.28,<0.12"]
