@@ -39,11 +39,11 @@ logger = logging.getLogger(__name__)
 
 def gen_session_id() -> str:
     return ''.join(
-            random.choices(
-                string.ascii_lowercase + string.digits,
-                k=24,
-            )
+        random.choices(
+            string.ascii_lowercase + string.digits,
+            k=24,
         )
+    )
 
 
 async def parse(
