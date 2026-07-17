@@ -15,7 +15,7 @@ from steamcb.tools import AnsiDecor, AnsiExtra
 
 class _ArgumentParser(argparse.ArgumentParser):
     def exit_(self, status: int, message: str) -> Never:
-        super().exit(status, f'test\n{AnsiDecor.RED}{message}{AnsiDecor.END}\n')
+        super().exit(status, f'\n{AnsiDecor.RED}{message}{AnsiDecor.END}\n')
 
 
 class _LoggingHandler(logging.StreamHandler):
