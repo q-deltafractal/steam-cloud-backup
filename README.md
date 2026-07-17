@@ -1,6 +1,6 @@
 # steam-cloud-backup
 
-micro-script for downloading all save files from [steam cloud](https://store.steampowered.com/account/remotestorage)
+micro-tool for downloading all save files from [steam cloud](https://store.steampowered.com/account/remotestorage)
 
 <br>
 
@@ -40,9 +40,9 @@ uv run steamcb/cli.py
 ```console
 $ steam-cloud-backup out/
 steamLoginSecure: <input>
-INFO:__main__:iter game: Steam Client; files count: 2
+ INFO YYYY-MM-DD HH-MM-SS,MMM :: iter game: Steam Client; files count: 2
 ...
-INFO:__main__:backup success
+ INFO YYYY-MM-DD HH-MM-SS,MMM :: backup success
 ```
 
 <br>
@@ -65,7 +65,7 @@ usage: steam-cloud-backup [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]
                           [--useragent USERAGENT] [-v (0, 1, 2)]
                           folder
 
-micro-script for downloading all save files from steam cloud
+micro-tool for downloading all save files from steam cloud
 
 options:
   -h, --help            show this help message and exit

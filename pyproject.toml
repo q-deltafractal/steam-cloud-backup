@@ -1,10 +1,10 @@
 [project]
 name = "steam-cloud-backup"
-version = "0.1.9"
+version = "0.1.10"
 authors = [
 	{ name="q-deltaftactal" }
 ]
-description = "micro-script for downloading all save files from steam cloud"
+description = "micro-tool for downloading all save files from steam cloud"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICEN[CS]E*"]

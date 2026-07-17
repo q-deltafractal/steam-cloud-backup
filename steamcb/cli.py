@@ -28,7 +28,7 @@ class _LoggingHandler(logging.StreamHandler):
 def _main() -> None:
     parser = _ArgumentParser(
         prog='steam-cloud-backup',
-        description='micro-script for downloading all save files from steam cloud',
+        description='micro-tool for downloading all save files from steam cloud',
     )
 
     # session group
