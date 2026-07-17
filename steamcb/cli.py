@@ -6,14 +6,23 @@ import logging
 import asyncio
 import argparse
 from pathlib import Path
+from typing import Never
 
 from steamcb.errors import BadSessionException, ZeroAnswerException
 from steamcb.lib import SESSION_ID, STEAM_LOGIN_SECURE, parse
+from steamcb.tools import AnsiDecor, AnsiExtra
 
 
 class _ArgumentParser(argparse.ArgumentParser):
-    def _print_message(self, message: str, file=None) -> None:
-        super()._print_message(f'\n{message}\n', file=file)
+    def exit_(self, status: int, message: str) -> Never:
+        super().exit(status, f'test\n{AnsiDecor.RED}{message}{AnsiDecor.END}\n')
+
+
+class _LoggingHandler(logging.StreamHandler):
+    def filter(self, record) -> bool:
+        if not hasattr(record, AnsiExtra.KEY):
+            setattr(record, AnsiExtra.KEY, AnsiDecor.PURPLE)
+        return True
 
 
 def _main() -> None:
@@ -82,7 +91,7 @@ def _main() -> None:
                     raise
                 setattr(args, k, value)
     except Exception, KeyboardInterrupt:
-        parser.exit(1, '\nnot enough data\n')
+        parser.exit_(1, 'not enough data')
 
     logging_level: int | None
     match args.verbose:
@@ -93,7 +102,14 @@ def _main() -> None:
         case 2:
             logging_level = logging.DEBUG
 
-    logging.basicConfig(level=logging_level)
+    logging.basicConfig(
+        level=logging_level,
+        format=(
+            f'{AnsiDecor.GRAY}{AnsiDecor.ITALIC} %(levelname)s %(asctime)s :: '
+            f'{AnsiDecor.END}%({AnsiExtra.KEY})s%(message)s{AnsiDecor.END}'
+        ),
+        handlers=(_LoggingHandler(),),
+    )
 
     # parser
     try:
@@ -108,11 +124,11 @@ def _main() -> None:
             )
         )
     except BadSessionException:
-        parser.exit(2, 'bad cookie session\n')
+        parser.exit_(2, 'bad cookie session')
     except ZeroAnswerException:
-        parser.exit(3, 'steam return zero page\n')
+        parser.exit_(3, 'steam return zero page')
     except KeyboardInterrupt:
-        parser.exit(4, 'user kill task')
+        parser.exit_(4, 'user kill task')
 
 
 if __name__ == '__main__':

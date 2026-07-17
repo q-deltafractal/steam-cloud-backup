@@ -11,7 +11,7 @@ import aiofiles
 import aiohttp
 from aiohttp import TCPConnector
 
-from steamcb.tools import TableParser
+from steamcb.tools import AnsiExtra, TableParser
 from steamcb.errors import BadSessionException, DownloadException, ZeroAnswerException
 
 
@@ -91,7 +91,9 @@ async def parse(
             raise ZeroAnswerException
         #                 / size
         for name, rows_c, _, g_url in games_table:
-            logger.info('iter game: %s; files count: %s', name, rows_c)
+            logger.info(
+                'iter game: %s; files count: %s', name, rows_c, extra=AnsiExtra.GREEN
+            )
 
             game_path = path_to_folder / name
 
@@ -101,7 +103,7 @@ async def parse(
                 first_iter = True
                 bad_files: set[Path] = set()
                 while first_iter or bad_files:
-                    logger.debug('%s', str(bad_files))
+                    logger.debug('bad files to fix: %s', str(bad_files))
                     try:
                         l_parser: TableParser
                         async with session.get(url=g_url, params=params) as dr:
@@ -129,7 +131,7 @@ async def parse(
 
                     first_iter = False
 
-    logger.info('backup success')
+    logger.info('backup success', extra=AnsiExtra.GREEN)
 
 
 async def download_file(
@@ -144,10 +146,12 @@ async def download_file(
             r.raise_for_status()
 
             async with aiofiles.open(path, 'wb') as f:
-                logger.info('download file %s; size: %s', path, size)
+                logger.info(
+                    'download file %s; size: %s', path, size, extra=AnsiExtra.CYAN
+                )
                 async for chunk in r.content.iter_chunked(chunk_size):
                     await f.write(chunk)
 
     except Exception as err:
-        logger.debug('%s: %s', type(err), str(err))
+        logger.debug('%s: %s', type(err), str(err), extra=AnsiExtra.RED)
         raise DownloadException(path)

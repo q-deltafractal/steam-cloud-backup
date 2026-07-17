@@ -1,7 +1,29 @@
 __all__ = ('TableParser',)
 
 import io
+from enum import StrEnum
 from html.parser import HTMLParser
+
+
+class AnsiDecor(StrEnum):
+    GRAY = '\033[1;30m'
+    CYAN = '\033[0;36m'
+    GREEN = '\033[1;32m'
+    RED = '\033[1;31m'
+    PURPLE = '\033[0;35m'
+    #
+    ITALIC = '\033[3m'
+    END = '\033[0m'
+
+
+class AnsiExtra:
+    """colors for logging (with extra= attr)"""
+
+    KEY = 'color'
+    #
+    CYAN = {KEY: AnsiDecor.CYAN}
+    GREEN = {KEY: AnsiDecor.GREEN}
+    RED = {KEY: AnsiDecor.RED}
 
 
 class _CellIO(io.StringIO):
