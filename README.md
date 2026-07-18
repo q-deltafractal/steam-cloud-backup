@@ -29,6 +29,7 @@ from source:
 # clone source
 git clone https://github.com/q-deltafractal/steam-cloud-backup.git
 cd steam-cloud-backup/
+# build
 uv build --clear
 uv tool install dist/*.whl
 ```
