@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Never
 
 from steamcb.errors import BadSessionException, ZeroAnswerException
-from steamcb.lib import SESSION_ID, STEAM_LOGIN_SECURE, parse
+from steamcb.lib import SESSION_ID, STEAM_LOGIN_SECURE, Parser
 from steamcb.tools import AnsiDecor, AnsiExtra
 
 
@@ -39,7 +39,7 @@ def _main() -> None:
         type=str,
     )
     group.add_argument(
-        '-l',
+        '-s',
         f'--{STEAM_LOGIN_SECURE}',
         type=str,
     )
@@ -66,7 +66,23 @@ def _main() -> None:
 
     # out group
     group = parser.add_argument_group('out')
-    group.add_argument('folder', type=Path)
+    group.add_argument('folder', nargs='?', type=Path)
+    group.add_argument(
+        '-l',
+        '--list',
+        action='store_true',
+        help='just display the list of games',
+    )
+    group.add_argument(
+        '-o',
+        '--only',
+        help="""download only specific games.
+Selection can be by element in the list (#1) (#10-12) (not recommended),
+game name (factorio),
+appid (427520).
+delimeter `;`""",
+        type=str,
+    )
     group.add_argument(
         '-v',
         '--verbose',
@@ -82,6 +98,9 @@ def _main() -> None:
     args = parser.parse_args()
     del group
 
+    if not args.list and args.folder is None:
+        parser.exit_(2, 'folder positional argument is required')
+
     # data
     try:
         for k in (STEAM_LOGIN_SECURE,):
@@ -91,7 +110,7 @@ def _main() -> None:
                     raise
                 setattr(args, k, value)
     except Exception, KeyboardInterrupt:
-        parser.exit_(1, 'not enough data')
+        parser.exit_(103, 'not enough data')
 
     logging_level: int | None
     match args.verbose:
@@ -111,24 +130,53 @@ def _main() -> None:
         handlers=(_LoggingHandler(),),
     )
 
+    only_games: set[str] = set()
+    if args.only is not None:
+        for select in args.only.split(';'):
+            select = select.strip()
+            if select.startswith('#'):
+                if select.find('-') != -1:
+                    start, end = map(int, select[1:].split('-', 1))
+                    only_games |= set(map(lambda a: f'#{a}', range(start, end + 1)))
+                    continue
+                only_games.add(select)
+                continue
+            only_games.add(select.lower())
+
     # parser
-    try:
-        asyncio.run(
-            parse(
-                c_session_id=getattr(args, SESSION_ID),
-                c_steam_login_secure=getattr(args, STEAM_LOGIN_SECURE),
-                concurrent_connections=args.max_concurrent_connections,
-                connect_timeout=args.connect_timeout,
+    async def work():
+        async with Parser(
+            c_session_id=getattr(args, SESSION_ID),
+            c_steam_login_secure=getattr(args, STEAM_LOGIN_SECURE),
+            concurrent_connections=args.max_concurrent_connections,
+            connect_timeout=args.connect_timeout,
+            useragent=args.useragent,
+        ) as p:
+            if args.list:
+                rows = await p.parse_games()
+
+                row_format = '{:<25}' * len(rows)
+                print(AnsiDecor.GRAY, row_format.format('No', 'appid', 'name'))
+                for i, (name, *_, url) in enumerate(rows, start=1):
+                    app_id = url[url.rindex('?appid=') + 7 :]
+                    color = AnsiDecor.GREEN if i % 2 == 0 else AnsiDecor.CYAN
+                    print(color, row_format.format(f'#{i}', app_id, name))
+
+                return
+
+            await p.parse(
+                only=only_games,
                 path_to_folder=args.folder,
-                useragent=args.useragent,
             )
-        )
+
+    try:
+        asyncio.run(work())
     except BadSessionException:
-        parser.exit_(2, 'bad cookie session')
+        parser.exit_(100, 'bad cookie session')
     except ZeroAnswerException:
-        parser.exit_(3, 'steam return zero page')
+        parser.exit_(101, 'steam return zero table')
     except KeyboardInterrupt:
-        parser.exit_(4, 'user kill task')
+        parser.exit_(102, 'user kill task')
 
 
 if __name__ == '__main__':

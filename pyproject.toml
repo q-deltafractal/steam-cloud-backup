@@ -1,8 +1,8 @@
 [project]
 name = "steam-cloud-backup"
-version = "0.1.10"
+version = "1.0.0"
 authors = [
-	{ name="q-deltaftactal" }
+	{ name = "q-deltaftactal", email = '283445376+q-deltafractal@users.noreply.github.com' }
 ]
 description = "micro-tool for downloading all save files from steam cloud"
 readme = "README.md"

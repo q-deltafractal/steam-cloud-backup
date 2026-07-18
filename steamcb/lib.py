@@ -1,4 +1,4 @@
-__all__ = ('parse',)
+__all__ = ('Parser',)
 
 import math
 import random
@@ -37,47 +37,50 @@ DEFAULT_USER_AGENT = (
 logger = logging.getLogger(__name__)
 
 
-def gen_session_id() -> str:
-    return ''.join(
-        random.choices(
-            string.ascii_lowercase + string.digits,
-            k=24,
+class Parser:
+    def __init__(
+        self,
+        c_steam_login_secure: str,
+        concurrent_connections: int,
+        connect_timeout: int,
+        useragent: str | None,
+        c_session_id: str | None,
+    ):
+
+        c_session_id = Parser.gen_session_id() if c_session_id is None else c_session_id
+        useragent = DEFAULT_USER_AGENT if useragent is None else useragent
+
+        self.session = aiohttp.ClientSession(
+            connector=TCPConnector(limit=concurrent_connections, ttl_dns_cache=300),
+            timeout=aiohttp.ClientTimeout(total=connect_timeout),
+            headers={
+                'User-Agent': useragent,
+            },
+            cookies={
+                SESSION_ID: c_session_id,
+                STEAM_LOGIN_SECURE: c_steam_login_secure,
+            },
+            cookie_jar=aiohttp.CookieJar(),
         )
-    )
 
+    @staticmethod
+    def gen_session_id() -> str:
+        return ''.join(
+            random.choices(
+                string.ascii_lowercase + string.digits,
+                k=24,
+            )
+        )
 
-async def parse(
-    c_steam_login_secure: str,
-    path_to_folder: Path,
-    concurrent_connections: int,
-    connect_timeout: int,
-    useragent: str | None,
-    c_session_id: str | None,
-) -> None:
-    if useragent is None:
-        useragent = DEFAULT_USER_AGENT
-    if c_session_id is None:
-        c_session_id = gen_session_id()
-
-    async with aiohttp.ClientSession(
-        connector=TCPConnector(limit=concurrent_connections, ttl_dns_cache=300),
-        timeout=aiohttp.ClientTimeout(total=connect_timeout),
-        headers={
-            'User-Agent': useragent,
-        },
-        cookies={
-            SESSION_ID: c_session_id,
-            STEAM_LOGIN_SECURE: c_steam_login_secure,
-        },
-        cookie_jar=aiohttp.CookieJar(),
-    ) as session:
+    async def parse_games(self) -> list[tuple[str, ...]]:
         text: str
-        async with session.get(url=REMOTE_STORAGE_URL) as r:
+        async with self.session.get(url=REMOTE_STORAGE_URL) as r:
             logger.debug('%s', str(r))
 
             if not r.ok:
                 raise BadSessionException
             text = await r.text()
+            # print(text)
 
         if 'g_AccountID = 0;' in text:
             raise BadSessionException
@@ -85,12 +88,26 @@ async def parse(
         g_parser = TableParser()
         g_parser.feed(text)
 
+        if not g_parser.rows:
+            raise ZeroAnswerException
+
+        return g_parser.rows
+
+    async def parse(self, only: set[str], path_to_folder: Path) -> None:
         path_to_folder.mkdir(parents=True, exist_ok=True)
 
-        if not (games_table := g_parser.rows):
-            raise ZeroAnswerException
         #                 / size
-        for name, rows_c, _, g_url in games_table:
+        for i, (name, rows_c, _, g_url) in enumerate(await self.parse_games(), start=1):
+            if (
+                not only
+                or g_url[g_url.rindex('?appid=') + 7 :] in only
+                or name.lower() in only
+                or f'#{i}' in only
+            ):
+                ...
+            else:
+                continue
+
             logger.info(
                 'iter game: %s; files count: %s', name, rows_c, extra=AnsiExtra.GREEN
             )
@@ -106,7 +123,7 @@ async def parse(
                     logger.debug('bad files to fix: %s', str(bad_files))
                     try:
                         l_parser: TableParser
-                        async with session.get(url=g_url, params=params) as dr:
+                        async with self.session.get(url=g_url, params=params) as dr:
                             l_parser = TableParser()
                             l_parser.feed(await dr.text())
 
@@ -121,7 +138,7 @@ async def parse(
                                 ):
                                     file_path.parent.mkdir(parents=True, exist_ok=True)
                                     task_g.create_task(
-                                        download_file(session, l_url, file_path, size)
+                                        self.download_file(l_url, file_path, size)
                                     )
                     except* DownloadException as errs:
                         for e in errs.exceptions:
@@ -131,27 +148,32 @@ async def parse(
 
                     first_iter = False
 
-    logger.info('backup success', extra=AnsiExtra.GREEN)
+        logger.info('backup success', extra=AnsiExtra.GREEN)
 
+    async def download_file(
+        self,
+        url: str,
+        path: Path,
+        size: str,
+        chunk_size: int = 8_192,
+    ) -> None:
+        try:
+            async with self.session.get(url=url) as r:
+                r.raise_for_status()
 
-async def download_file(
-    session: aiohttp.ClientSession,
-    url: str,
-    path: Path,
-    size: str,
-    chunk_size: int = 8_192,
-) -> None:
-    try:
-        async with session.get(url=url) as r:
-            r.raise_for_status()
+                async with aiofiles.open(path, 'wb') as f:
+                    logger.info(
+                        'download file %s; size: %s', path, size, extra=AnsiExtra.CYAN
+                    )
+                    async for chunk in r.content.iter_chunked(chunk_size):
+                        await f.write(chunk)
 
-            async with aiofiles.open(path, 'wb') as f:
-                logger.info(
-                    'download file %s; size: %s', path, size, extra=AnsiExtra.CYAN
-                )
-                async for chunk in r.content.iter_chunked(chunk_size):
-                    await f.write(chunk)
+        except Exception as err:
+            logger.debug('%s: %s', type(err), str(err), extra=AnsiExtra.RED)
+            raise DownloadException(path)
 
-    except Exception as err:
-        logger.debug('%s: %s', type(err), str(err), extra=AnsiExtra.RED)
-        raise DownloadException(path)
+    async def __aenter__(self) -> Parser:
+        return self
+
+    async def __aexit__(self, *args, **kwargs) -> None:
+        await self.session.__aexit__(*args, **kwargs)

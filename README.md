@@ -28,9 +28,9 @@ from source:
 ```bash
 # clone source
 git clone https://github.com/q-deltafractal/steam-cloud-backup.git
-cd steam-cloud-backup
-# run script
-uv run steamcb/cli.py
+cd steam-cloud-backup/
+uv build --clear
+uv tool install dist/*.whl
 ```
 
 <br>
@@ -59,11 +59,11 @@ Method of obtaining this cookie:
 <br>
 
 ```console block=api
-usage: steam-cloud-backup [-h] [-i SESSIONID] [-l STEAMLOGINSECURE]
+usage: steam-cloud-backup [-h] [-i SESSIONID] [-s STEAMLOGINSECURE]
                           [-j MAX_CONCURRENT_CONNECTIONS]
                           [--connect-timeout CONNECT_TIMEOUT]
-                          [--useragent USERAGENT] [-v (0, 1, 2)]
-                          folder
+                          [--useragent USERAGENT] [-l] [-o ONLY] [-v (0, 1, 2)]
+                          [folder]
 
 micro-tool for downloading all save files from steam cloud
 
@@ -72,7 +72,7 @@ options:
 
 session:
   -i, --sessionId SESSIONID
-  -l, --steamLoginSecure STEAMLOGINSECURE
+  -s, --steamLoginSecure STEAMLOGINSECURE
 
 connection:
   -j, --max-concurrent-connections MAX_CONCURRENT_CONNECTIONS
@@ -83,6 +83,10 @@ connection:
 
 out:
   folder
+  -l, --list            just display the list of games
+  -o, --only ONLY       download only specific games. Selection can be by
+                        element in the list (#1) (#10-12) (not recommended),
+                        game name (factorio), appid (427520). delimeter `;`
   -v, --verbose (0, 1, 2)
                         logging level: 0 - off; 1 (default) - info; 2 - debug
 ```
