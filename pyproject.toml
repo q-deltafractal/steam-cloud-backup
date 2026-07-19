@@ -1,6 +1,6 @@
 [project]
 name = "steam-cloud-backup"
-version = "1.0.0"
+version = "1.1.0"
 authors = [
 	{ name = "q-deltaftactal", email = '283445376+q-deltafractal@users.noreply.github.com' }
 ]
