@@ -1,11 +1,14 @@
 __all__ = ('Parser',)
 
+import os
 import math
 import random
 import string
 import logging
 import asyncio
 from pathlib import Path
+from typing import Callable
+from datetime import datetime as dt, timezone as tz
 
 import aiofiles
 import aiohttp
@@ -93,10 +96,31 @@ class Parser:
 
         return g_parser.rows
 
-    async def parse(self, only: set[str], path_to_folder: Path) -> None:
+    async def parse(
+        self,
+        only: set[str],
+        path_to_folder: Path,
+        parse_date_written: bool = True,
+    ) -> None:
+        if parse_date_written:
+
+            def callback(path: Path, updated_at: str) -> None:
+                if len(split_time := updated_at.split()) == 4:
+                    split_time[1] += f', {dt.now(tz=tz.utc).year}'
+                    updated_at = ' '.join(split_time)
+                timestamp = dt.strptime(
+                    f'{updated_at}+0000',
+                    '%d %b, %Y @ %I:%M%p%z',
+                ).timestamp()
+
+                os.utime(path, (timestamp, timestamp))
+        else:
+
+            def callback(*_) -> None: ...
+
         path_to_folder.mkdir(parents=True, exist_ok=True)
 
-        #                 / size
+        #                     / size
         for i, (name, rows_c, _, g_url) in enumerate(await self.parse_games(), start=1):
             if (
                 not only
@@ -128,8 +152,13 @@ class Parser:
                             l_parser.feed(await dr.text())
 
                         async with asyncio.TaskGroup() as task_g:
-                            #                            / date written
-                            for folder, file_name, size, _, l_url in l_parser.rows:
+                            for (
+                                folder,
+                                file_name,
+                                size,
+                                written_at,
+                                l_url,
+                            ) in l_parser.rows:
                                 file_path = game_path / folder / file_name
                                 if first_iter or (
                                     file_path in bad_files
@@ -138,7 +167,9 @@ class Parser:
                                 ):
                                     file_path.parent.mkdir(parents=True, exist_ok=True)
                                     task_g.create_task(
-                                        self.download_file(l_url, file_path, size)
+                                        self.download_file(
+                                            l_url, file_path, size, written_at, callback
+                                        )
                                     )
                     except* DownloadException as errs:
                         for e in errs.exceptions:
@@ -155,6 +186,8 @@ class Parser:
         url: str,
         path: Path,
         size: str,
+        written_at: str,
+        success_callback: Callable[[Path, str], None],
         chunk_size: int = 8_192,
     ) -> None:
         try:
@@ -168,8 +201,10 @@ class Parser:
                     async for chunk in r.content.iter_chunked(chunk_size):
                         await f.write(chunk)
 
+                success_callback(path, written_at)
+
         except Exception as err:
-            logger.debug('%s: %s', type(err), str(err), extra=AnsiExtra.RED)
+            logger.debug('%s', str(err), extra=AnsiExtra.RED)
             raise DownloadException(path)
 
     async def __aenter__(self) -> Parser:

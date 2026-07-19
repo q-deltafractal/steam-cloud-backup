@@ -63,7 +63,8 @@ Method of obtaining this cookie:
 usage: steam-cloud-backup [-h] [-i SESSIONID] [-s STEAMLOGINSECURE]
                           [-j MAX_CONCURRENT_CONNECTIONS]
                           [--connect-timeout CONNECT_TIMEOUT]
-                          [--useragent USERAGENT] [-l] [-o ONLY] [-v (0, 1, 2)]
+                          [--useragent USERAGENT] [-l] [-o ONLY] [-d]
+                          [-v (0, 1, 2)]
                           [folder]
 
 micro-tool for downloading all save files from steam cloud
@@ -88,6 +89,9 @@ out:
   -o, --only ONLY       download only specific games. Selection can be by
                         element in the list (#1) (#10-12) (not recommended),
                         game name (factorio), appid (427520). delimeter `;`
+  -d, --parse-date-written
+                        set accessed and modified datetime for files from
+                        steam cloud data
   -v, --verbose (0, 1, 2)
                         logging level: 0 - off; 1 (default) - info; 2 - debug
 ```

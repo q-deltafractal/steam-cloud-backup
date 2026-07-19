@@ -84,6 +84,12 @@ delimeter `;`""",
         type=str,
     )
     group.add_argument(
+        '-d',
+        '--parse-date-written',
+        action='store_true',
+        help='set accessed and modified datetime for files from steam cloud data',
+    )
+    group.add_argument(
         '-v',
         '--verbose',
         choices=(0, 1, 2),
@@ -167,6 +173,7 @@ delimeter `;`""",
             await p.parse(
                 only=only_games,
                 path_to_folder=args.folder,
+                parse_date_written=args.parse_date_written,
             )
 
     try:
